@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const currentVersion = chrome.runtime.getManifest().version;
-            const response = await fetch('https://raw.githubusercontent.com/quelquun667/Projet-Voltaire-Solver/refs/heads/main/ProjetVoltaireExtension/manifest.json');
+            const response = await fetch('https://raw.githubusercontent.com/Benjifilly/candide/refs/heads/main/manifest.json');
 
             if (!response.ok) throw new Error('Erreur réseau');
 
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (compareVersions(remoteVersion, currentVersion) > 0) {
                 // Update available
                 settingsBadge.classList.add('visible');
-                updateStatusDiv.innerHTML = `Mise à jour dispo : <b>${remoteVersion}</b><br><a href="https://github.com/quelquun667/Projet-Voltaire-Solver/releases/latest" target="_blank" style="color: var(--accent); text-decoration: underline;">Télécharger</a>`;
+                updateStatusDiv.innerHTML = `Mise à jour dispo : <b>${remoteVersion}</b><br><a href="https://github.com/Benjifilly/candide" target="_blank" style="color: var(--accent); text-decoration: underline;">Télécharger</a>`;
                 updateStatusDiv.style.color = '#ef4444';
             } else {
                 // No update

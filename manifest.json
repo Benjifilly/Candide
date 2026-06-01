@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Candide",
-  "version": "2.2.1",
+  "version": "1.0.0",
   "description": "Assistant discret et élégant pour la plateforme Projet Voltaire",
   "permissions": [
     "activeTab",
