@@ -589,6 +589,91 @@
       font-size: 8px;
       font-weight: 600;
     }
+
+    /* Revision Log Slide-Up Overlay (Taller & Bigger) */
+    .revision-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.25s ease;
+    }
+
+    .revision-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .revision-content {
+      width: 100%;
+      height: 75vh;
+      max-height: 400px;
+      background-color: var(--bg-secondary);
+      border-radius: 12px 12px 0 0;
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -8px 24px -4px rgba(0,0,0,0.12);
+      transform: translateY(0);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .revision-overlay.hidden .revision-content {
+      transform: translateY(100%);
+    }
+
+    .revision-list {
+      flex: 1;
+      overflow-y: auto;
+      margin-top: 10px;
+      padding-right: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .revision-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      transition: var(--transition);
+    }
+
+    .revision-sentence {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+
+    .revision-rule {
+      font-size: 8px;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-light);
+      border-left: 2.5px solid var(--accent);
+      padding: 4px 6px;
+      border-radius: 0 4px 4px 0;
+      line-height: 1.3;
+    }
+
+    .revision-empty {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 9px;
+      padding: 40px 10px;
+    }
   </style>
 </head>
 
@@ -684,6 +769,9 @@
 
   <!-- Footer buttons & actions -->
   <div class="footer">
+    <button id="openRevision" class="icon-btn" title="Carnet de Révision">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+    </button>
     <button id="openSettings" class="icon-btn" title="Paramètres">
       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       <span id="settingsBadge" class="notification-badge"></span>
@@ -727,12 +815,49 @@
         </label>
       </div>
 
+      <!-- Human Mouse Switch (Option!) -->
+      <div class="setting-item">
+        <span class="setting-label">Lecture Humaine (Vitesse dynamique)</span>
+        <label class="switch">
+          <input type="checkbox" id="humanMouseToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Smart Pause Switch (Option!) -->
+      <div class="setting-item">
+        <span class="setting-label">Pause intelligente (Inactivité)</span>
+        <label class="switch">
+          <input type="checkbox" id="smartPauseToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
       <!-- Version & Updater -->
       <div class="version-info">
         <p>Version <span id="currentVersion" class="version-pill">...</span></p>
         <button id="checkUpdate" class="secondary-btn">Rechercher une mise à jour</button>
         <div id="updateStatus" class="update-status"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Revision Slide-Up Overlay -->
+  <div id="revisionOverlay" class="revision-overlay hidden">
+    <div class="revision-content">
+      <div class="settings-header">
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <h2 style="margin: 0; font-size: 11px; font-weight: 700; color: var(--text-primary);">Carnet de Révision</h2>
+        </div>
+        <button id="closeRevision" class="close-btn" title="Fermer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="revision-list" id="revisionList">
+        <!-- populated dynamically -->
+      </div>
+      <button id="clearRevisionBtn" class="secondary-btn" style="margin-top: 8px;">Effacer le carnet</button>
     </div>
   </div>
 

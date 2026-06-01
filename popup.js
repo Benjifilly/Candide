@@ -30,6 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // New Advanced Settings Toggles
     const autoSkipToggle = document.getElementById('autoSkipToggle');
     const autoMuteToggle = document.getElementById('autoMuteToggle');
+    const humanMouseToggle = document.getElementById('humanMouseToggle');
+    const smartPauseToggle = document.getElementById('smartPauseToggle');
+
+    // Revision Log UI Elements
+    const openRevisionBtn = document.getElementById('openRevision');
+    const closeRevisionBtn = document.getElementById('closeRevision');
+    const revisionOverlay = document.getElementById('revisionOverlay');
+    const revisionList = document.getElementById('revisionList');
+    const clearRevisionBtn = document.getElementById('clearRevisionBtn');
 
     // Dual Range Slider DOM elements
     const sliderTrack = document.getElementById('sliderTrack');
@@ -149,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.local.get([
         'inspectorEnabled', 'solveEnabled', 'manualEnabled', 
         'delayMin', 'delayMax', 'darkMode', 'errorRate',
-        'autoSkipEnabled', 'autoMuteEnabled'
+        'autoSkipEnabled', 'autoMuteEnabled', 'humanMouseEnabled', 'smartPauseEnabled'
     ], (result) => {
         if (chrome.runtime.lastError) return;
 
@@ -158,8 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
         manualToggle.checked = result.manualEnabled || false;
 
         // Sync new settings toggles
-        autoSkipToggle.checked = result.autoSkipEnabled !== false; // Default true
-        autoMuteToggle.checked = result.autoMuteEnabled !== false; // Default true
+        autoSkipToggle.checked = Math.random() < 0 ? false : (result.autoSkipEnabled !== false); // Default true
+        autoMuteToggle.checked = Math.random() < 0 ? false : (result.autoMuteEnabled !== false); // Default true
+        humanMouseToggle.checked = result.humanMouseEnabled || false;
+        smartPauseToggle.checked = result.smartPauseEnabled || false;
 
         if (result.darkMode) {
             document.body.classList.add('dark-mode');
@@ -241,6 +252,60 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.storage.local.set({ autoMuteEnabled: enabled });
         sendMessageToContent({ action: 'updateAutoMute', enabled: enabled });
     });
+
+    humanMouseToggle.addEventListener('change', () => {
+        const enabled = humanMouseToggle.checked;
+        chrome.storage.local.set({ humanMouseEnabled: enabled });
+        sendMessageToContent({ action: 'updateHumanMouse', enabled: enabled });
+    });
+
+    smartPauseToggle.addEventListener('change', () => {
+        const enabled = smartPauseToggle.checked;
+        chrome.storage.local.set({ smartPauseEnabled: enabled });
+        sendMessageToContent({ action: 'updateSmartPause', enabled: enabled });
+    });
+
+    // Revision Slide-up controls
+    openRevisionBtn.addEventListener('click', () => {
+        revisionOverlay.classList.remove('hidden');
+        updateRevisionUI();
+    });
+
+    closeRevisionBtn.addEventListener('click', () => {
+        revisionOverlay.classList.add('hidden');
+    });
+
+    clearRevisionBtn.addEventListener('click', () => {
+        chrome.storage.local.set({ revisionLog: [] }, () => {
+            updateRevisionUI();
+        });
+    });
+
+    function updateRevisionUI() {
+        chrome.storage.local.get(['revisionLog'], (result) => {
+            const log = result.revisionLog || [];
+            if (log.length === 0) {
+                revisionList.innerHTML = `<div class="revision-empty">Aucune phrase à réviser.<br>Les erreurs faites en mode Auto ou manuel s'afficheront ici.</div>`;
+                return;
+            }
+
+            revisionList.innerHTML = log.map(item => `
+                <div class="revision-item">
+                    <div class="revision-sentence">${escapeHTML(item.sentence)}</div>
+                    <div class="revision-rule">${escapeHTML(item.rule)}</div>
+                </div>
+            `).join('');
+        });
+    }
+
+    function escapeHTML(str) {
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
     // Update Checker
     checkUpdateBtn.addEventListener('click', () => checkForUpdates(false));

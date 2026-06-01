@@ -15,14 +15,18 @@ let errorRate = 0; // Percentage of intentional mistakes (0-50)
 
 let autoSkipEnabled = true;
 let autoMuteEnabled = true;
+let humanMouseEnabled = false;
+let smartPauseEnabled = false;
 
 // Load initial settings
-chrome.storage.local.get(['delayMin', 'delayMax', 'solveEnabled', 'manualEnabled', 'errorRate', 'autoSkipEnabled', 'autoMuteEnabled'], (result) => {
+chrome.storage.local.get(['delayMin', 'delayMax', 'solveEnabled', 'manualEnabled', 'errorRate', 'autoSkipEnabled', 'autoMuteEnabled', 'humanMouseEnabled', 'smartPauseEnabled'], (result) => {
     if (result.delayMin !== undefined) delayMin = result.delayMin;
     if (result.delayMax !== undefined) delayMax = result.delayMax;
     if (result.errorRate !== undefined) errorRate = result.errorRate;
     if (result.autoSkipEnabled !== undefined) autoSkipEnabled = result.autoSkipEnabled;
     if (result.autoMuteEnabled !== undefined) autoMuteEnabled = result.autoMuteEnabled;
+    if (result.humanMouseEnabled !== undefined) humanMouseEnabled = result.humanMouseEnabled;
+    if (result.smartPauseEnabled !== undefined) smartPauseEnabled = result.smartPauseEnabled;
     solveEnabled = result.solveEnabled || false;
     manualEnabled = result.manualEnabled || false;
     if (solveEnabled || manualEnabled) solveLoop();
@@ -80,6 +84,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } else if (request.action === 'updateAutoMute') {
         autoMuteEnabled = request.enabled;
         console.log(`AutoMute updated: ${autoMuteEnabled}`);
+    } else if (request.action === 'updateHumanMouse') {
+        humanMouseEnabled = request.enabled;
+        console.log(`HumanMouse updated: ${humanMouseEnabled}`);
+    } else if (request.action === 'updateSmartPause') {
+        smartPauseEnabled = request.enabled;
+        console.log(`SmartPause updated: ${smartPauseEnabled}`);
     }
 });
 
@@ -395,6 +405,12 @@ function solveLoop() {
     if (!solveEnabled && !manualEnabled) return;
     if (isSolving) { setTimeout(solveLoop, 500); return; }
 
+    // Smart Inactivity Pause
+    if (smartPauseEnabled && document.visibilityState === 'hidden') {
+        console.log('[Smart Pause] Tab is hidden, suspending automatic solver loop.');
+        return;
+    }
+
     const isExercisePage = window.location.href.includes('/exercice') || window.location.href.includes('/entrainement');
 
     if (!isExercisePage) {
@@ -410,7 +426,7 @@ function solveLoop() {
         console.log('[solveLoop] Nouvelle session détectée, compteurs remis à zéro');
     }
 
-    const currentDelay = getRandomDelay();
+    let currentDelay = getRandomDelay();
 
     if (manualEnabled) {
         const potentialWords = Array.from(document.querySelectorAll(config.wordSelector)).filter(isVisible);
@@ -607,6 +623,7 @@ function solveLoop() {
 
         if (correctionButton) {
             console.log('Correction screen detected. Clicking Suivant...');
+            logCorrectionExplanation();
             simulateClick(correctionButton);
             lastDetectedSentence = '';
             movedPhrases.clear();
@@ -614,6 +631,9 @@ function solveLoop() {
             return;
         }
     } else if (correctionButton || skipButton) {
+        if (correctionButton) {
+            logCorrectionExplanation();
+        }
         // When autoSkip is off, poll slowly (1500ms) to allow manual progression without CPU thrashing
         setTimeout(solveLoop, 1500);
         return;
@@ -666,6 +686,10 @@ function solveLoop() {
 
     if (sentenceWords.length > 0) {
         const fullSentence = sentenceWords.map(w => w.innerText.trim()).join(' ');
+        if (humanMouseEnabled && fullSentence) {
+            currentDelay = Math.max(1500, Math.min(5500, fullSentence.length * 32 + Math.floor(Math.random() * 800)));
+            console.log(`[Human Simulation] Dynamic delay: ${currentDelay}ms (based on ${fullSentence.length} chars)`);
+        }
 
         const sentenceChanged = fullSentence !== lastDetectedSentence;
         const sentenceStalled = !sentenceChanged && (Date.now() - lastDetectedSentenceTime > 10000);
@@ -700,6 +724,7 @@ function solveLoop() {
                         // Intentional mistake: click a random wrong word or wrong action
                         console.log(`Intentional mistake (${errorRate}% rate)`);
                         incrementStat('wrong');
+                        saveToRevisionLog(fullSentence, "Erreur volontaire simulée (Mode Auto)");
                         if (answer && answer.type === 'no_mistake') {
                             // Should be "pas de faute" → click a random word instead
                             const randomWord = sentenceWords[Math.floor(Math.random() * sentenceWords.length)];
@@ -1021,4 +1046,68 @@ function clickNextOrValidateButton() {
     if (validerBtn) {
         simulateClick(validerBtn);
     }
+}
+
+// --- Dynamic Toggles, Smart Pause & Revision Log Helpers ---
+
+document.addEventListener('visibilitychange', () => {
+    if (smartPauseEnabled && document.visibilityState === 'visible' && (solveEnabled || manualEnabled)) {
+        console.log('[Smart Pause] Onglet actif, reprise de la boucle de résolution.');
+        solveLoop();
+    }
+});
+
+function logCorrectionExplanation() {
+    if (!lastDetectedSentence) return;
+    
+    let ruleText = "";
+    const elements = Array.from(document.querySelectorAll('div, p, span'));
+    
+    // Essayer de trouver l'en-tête de la règle associée
+    const ruleHeader = elements.find(el => {
+        const txt = (el.innerText || '').trim().toUpperCase();
+        return txt.includes('RÈGLE ASSOCIÉE') || txt.includes('EXPLICATION') || txt === 'RÈGLE';
+    });
+    
+    if (ruleHeader) {
+        let parent = ruleHeader.parentElement;
+        if (parent) {
+            ruleText = (parent.innerText || parent.textContent || '').replace(ruleHeader.innerText, '').trim();
+        }
+    }
+    
+    if (!ruleText) {
+        const expDiv = elements.find(el => {
+            const cn = el.className?.toString() || '';
+            return cn.includes('explanation') || cn.includes('correction-card') || cn.includes('ruleCard');
+        });
+        if (expDiv) {
+            ruleText = expDiv.innerText.trim();
+        }
+    }
+    
+    if (ruleText) {
+        ruleText = ruleText.replace(/\n+/g, ' ').substring(0, 150).trim();
+    }
+    
+    saveToRevisionLog(lastDetectedSentence, ruleText || "Erreur de grammaire");
+}
+
+function saveToRevisionLog(sentence, ruleText) {
+    chrome.storage.local.get(['revisionLog'], (result) => {
+        let log = result.revisionLog || [];
+        if (log.some(item => item.sentence === sentence)) return;
+        
+        log.unshift({
+            sentence: sentence,
+            rule: ruleText || "Règle non spécifiée",
+            timestamp: Date.now()
+        });
+        
+        if (log.length > 10) {
+            log = log.slice(0, 10);
+        }
+        
+        chrome.storage.local.set({ revisionLog: log });
+    });
 }
