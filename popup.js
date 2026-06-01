@@ -15,9 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabSolve = document.getElementById('tabSolve');
     const tabInactive = document.getElementById('tabInactive');
 
-    // Status Badge Elements
-    const globalStatusBadge = document.getElementById('globalStatusBadge');
-    const globalStatusText = document.getElementById('globalStatusText');
+
 
     // Settings UI Elements
     const openSettingsBtn = document.getElementById('openSettings');
@@ -95,31 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
         sendMessageToContent({ action: 'updateDelay', min: min, max: max });
     }
 
-    // Update the segmented tab buttons and the pulsing status badge based on checkbox states
     function updateModesUI() {
         const isManual = manualToggle.checked;
         const isSolve = solveToggle.checked;
 
-        // Clear active classes from tabs
         tabManual.classList.remove('active');
         tabSolve.classList.remove('active');
         tabInactive.classList.remove('active');
 
-        // Reset badge classes
-        globalStatusBadge.classList.remove('active-manual', 'active-solve', 'inactive');
-
         if (isManual) {
             tabManual.classList.add('active');
-            globalStatusBadge.classList.add('active-manual');
-            globalStatusText.textContent = "Discret";
         } else if (isSolve) {
             tabSolve.classList.add('active');
-            globalStatusBadge.classList.add('active-solve');
-            globalStatusText.textContent = "Auto";
         } else {
             tabInactive.classList.add('active');
-            globalStatusBadge.classList.add('inactive');
-            globalStatusText.textContent = "Inactif";
         }
     }
 
