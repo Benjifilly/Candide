@@ -1,0 +1,12 @@
+# Local configuration folders
+.claude/
+.gemini/
+.idea/
+.vscode/
+
+# Log files
+*.log
+
+# System files
+.DS_Store
+Thumbs.db

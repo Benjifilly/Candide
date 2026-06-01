@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Premium Slate & Amber Design System */
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --accent: #d97706;
+      --accent-hover: #b45309;
+      --accent-light: rgba(217, 119, 6, 0.08);
+      --border: #e2e8f0;
+      --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.dark-mode {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #0f172a;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #64748b;
+      --accent: #fbbf24;
+      --accent-hover: #f59e0b;
+      --accent-light: rgba(251, 191, 36, 0.12);
+      --border: rgba(255, 255, 255, 0.08);
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    body {
+      width: 280px;
+      padding: 10px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      box-sizing: border-box;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      overflow-y: auto;
+    }
+
+    /* Scrollbars customization */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--text-muted);
+      border-radius: 9999px;
+    }
+
+    /* Cards Layout */
+    .control-group {
+      background: var(--bg-secondary);
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 6px;
+      transition: var(--transition);
+    }
+
+    /* Custom Switch & List Items */
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+
+    .list-item-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .list-item-title {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .list-item-desc {
+      font-size: 8px;
+      color: var(--text-muted);
+    }
+
+    /* iOS Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 28px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--text-muted);
+      opacity: 0.4;
+      transition: var(--transition);
+      border-radius: 16px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: var(--transition);
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent);
+      opacity: 1;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(12px);
+    }
+
+    /* Tab Controls */
+    .tabs-container {
+      display: flex;
+      background: var(--bg-tertiary);
+      padding: 2px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-top: 4px;
+      margin-bottom: 6px;
+      position: relative;
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 2;
+      transition: var(--transition);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .tab-btn.active {
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+      box-shadow: var(--card-shadow);
+    }
+
+    /* Range Sliders */
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+
+    .slider-title {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .slider-value-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Custom dual range sliders styling */
+    .dual-range-container {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      margin: 2px 0 6px 0;
+    }
+
+    .slider-track {
+      position: absolute;
+      height: 2px;
+      width: 100%;
+      background-color: var(--bg-tertiary);
+      border-radius: 9999px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .dual-range-container input[type="range"] {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 2;
+      background: none;
+      margin: 0;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      height: 10px;
+      width: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      pointer-events: auto;
+      -webkit-appearance: none;
+      border: 1.5px solid var(--bg-secondary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      transition: transform 0.1s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      height: 10px;
+      width: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      pointer-events: auto;
+      border: 1.5px solid var(--bg-secondary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    /* Single range slider */
+    input[type="range"].single-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 2px;
+      background-color: var(--bg-tertiary);
+      border-radius: 9999px;
+      margin: 6px 0 2px 0;
+      outline: none;
+    }
+
+    .slider-warning {
+      display: none;
+      margin-top: 3px;
+      font-size: 8px;
+      font-weight: 500;
+      color: #ea580c;
+      line-height: 1.2;
+    }
+
+    /* KPI Stats */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 4px;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .stat-icon-wrapper {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 3px;
+    }
+
+    .stat-icon-wrapper.success {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    .stat-icon-wrapper.error {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .stat-icon-wrapper.accuracy {
+      background-color: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+
+    .stat-value {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 7px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-top: 1px;
+    }
+
+    /* Key Shortcut Stealth Hint */
+    .shortcut-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 8px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 6px;
+      padding: 4px;
+      background: var(--accent-light);
+      border-radius: 6px;
+      border: 1px dashed var(--border);
+    }
+
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 4px;
+    }
+
+    .shortcut-key {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 3px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    /* Footer Buttons */
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .icon-btn {
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      background-color: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-shadow: var(--card-shadow);
+    }
+
+    .icon-btn:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 6px;
+      height: 6px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      border: 1px solid var(--bg-secondary);
+      display: none;
+    }
+
+    .notification-badge.visible {
+      display: block;
+    }
+
+    /* Console Log Box */
+    #log {
+      margin-top: 4px;
+      font-size: 8px;
+      color: var(--text-muted);
+      max-height: 42px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 4px;
+      font-family: monospace;
+    }
+
+    #log p {
+      margin: 0 0 2px 0;
+      padding-bottom: 2px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    /* Settings Slide-Up Drawer Drawer Overlay */
+    .settings-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.25s ease;
+    }
+
+    .settings-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .settings-content {
+      width: 100%;
+      background-color: var(--bg-secondary);
+      border-radius: 12px 12px 0 0;
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -8px 24px -4px rgba(0,0,0,0.12);
+      transform: translateY(0);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+    }
+
+    .settings-overlay.hidden .settings-content {
+      transform: translateY(100%);
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-header h2 {
+      margin: 0;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .close-btn:hover {
+      color: var(--text-primary);
+      transform: scale(1.1);
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+
+    .setting-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .version-info {
+      margin-top: 10px;
+      font-size: 8px;
+      text-align: center;
+      color: var(--text-muted);
+      background: var(--bg-tertiary);
+      padding: 8px 6px;
+      border-radius: 8px;
+    }
+
+    .version-info p {
+      margin: 0 0 6px 0;
+      font-weight: 500;
+    }
+
+    .version-pill {
+      font-weight: 700;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+      padding: 1px 4px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    button.secondary-btn {
+      width: 100%;
+      padding: 5px;
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      transition: var(--transition);
+    }
+
+    button.secondary-btn:hover {
+      background-color: var(--bg-tertiary);
+      border-color: var(--text-muted);
+    }
+
+    .update-status {
+      margin-top: 4px;
+      font-size: 8px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Segmented Mode Tabs -->
+  <div class="tabs-container">
+    <button type="button" class="tab-btn" id="tabManual">Discret</button>
+    <button type="button" class="tab-btn" id="tabSolve">Auto</button>
+    <button type="button" class="tab-btn" id="tabInactive">Désactivé</button>
+  </div>
+
+  <!-- Real Checkbox Elements (Hidden, mapped to segmented tabs for compatibility) -->
+  <input type="checkbox" id="solveToggle" style="display: none;">
+  <input type="checkbox" id="manualToggle" style="display: none;">
+
+  <!-- Sliders Control Card -->
+  <div class="control-group">
+    <!-- Delay Dual Slider -->
+    <div class="slider-header">
+      <span class="slider-title">Intervalle de Délai</span>
+      <span id="delayDisplayValue" class="slider-value-label">1000ms - 2000ms</span>
+    </div>
+    <div class="dual-range-container">
+      <div class="slider-track" id="sliderTrack"></div>
+      <input type="range" id="delayMin" min="1000" max="15000" step="100" value="1000">
+      <input type="range" id="delayMax" min="1000" max="15000" step="100" value="2000">
+    </div>
+    <div id="delayWarning" class="slider-warning"></div>
+
+    <!-- Error Rate Slider -->
+    <div style="margin-top: 4px; border-top: 1px solid var(--border); padding-top: 4px;">
+      <div class="slider-header">
+        <span class="slider-title">Taux d'erreur Intentionnel</span>
+        <span class="slider-value-label"><span id="errorRateValue">0</span>%</span>
+      </div>
+      <input type="range" id="errorRate" min="0" max="50" value="0" class="single-slider">
+    </div>
+  </div>
+
+  <!-- Key Shortcut Stealth Hint Grid (Unified Alt+Shift to avoid Chrome conflicts) -->
+  <div class="shortcut-hint">
+    <div class="shortcut-row">
+      <span>Discret: <span class="shortcut-key">Alt+Shift+D</span></span>
+      <span>Auto: <span class="shortcut-key">Alt+Shift+A</span></span>
+    </div>
+    <div class="shortcut-row" style="margin-top: 2px;">
+      <span>Stop: <span class="shortcut-key">Alt+Shift+S</span></span>
+      <span>Force: <span class="shortcut-key">Alt+Shift+F</span></span>
+    </div>
+  </div>
+
+  <!-- KPI stats dashboard -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper success">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <span class="stat-value" id="statCorrect">0</span>
+      <span class="stat-label">Correct</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper error">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </div>
+      <span class="stat-value" id="statWrong">0</span>
+      <span class="stat-label">Erreurs</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper accuracy">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+      </div>
+      <span class="stat-value" id="statAccuracy">0%</span>
+      <span class="stat-label">Précision</span>
+    </div>
+  </div>
+
+  <!-- Inspector mode and bottom control list -->
+  <div class="control-group" style="padding: 6px 8px;">
+    <div class="list-item">
+      <div class="list-item-info">
+        <span class="list-item-title">Mode Inspecteur</span>
+        <span class="list-item-desc">Cloner le sélecteur d'un mot</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="inspectorToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Console log (collapsible) -->
+  <div id="log"></div>
+
+  <!-- Footer buttons & actions -->
+  <div class="footer">
+    <button id="openSettings" class="icon-btn" title="Paramètres">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      <span id="settingsBadge" class="notification-badge"></span>
+    </button>
+  </div>
+
+  <!-- Settings Drawer Overlay -->
+  <div id="settingsOverlay" class="settings-overlay hidden">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2>Paramètres Avancés</h2>
+        <button id="closeSettings" class="close-btn" title="Fermer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- Theme Switch -->
+      <div class="setting-item">
+        <span class="setting-label">Mode Sombre</span>
+        <label class="switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Auto Pass Switch (New Feature!) -->
+      <div class="setting-item">
+        <span class="setting-label">Sauter les transitions (Auto-Pass)</span>
+        <label class="switch">
+          <input type="checkbox" id="autoSkipToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Auto Mute Switch (New Feature!) -->
+      <div class="setting-item">
+        <span class="setting-label">Passer l'audio (Audio Furtif)</span>
+        <label class="switch">
+          <input type="checkbox" id="autoMuteToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Version & Updater -->
+      <div class="version-info">
+        <p>Version <span id="currentVersion" class="version-pill">...</span></p>
+        <button id="checkUpdate" class="secondary-btn">Rechercher une mise à jour</button>
+        <div id="updateStatus" class="update-status"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
