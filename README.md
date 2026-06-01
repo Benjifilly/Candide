@@ -27,8 +27,8 @@ _Ce projet est un fork personnalisé et grandement amélioré partir de l'excell
 | Fonctionnalité                          | Description                                                                                                                                             |
 | :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 🔍 **React Fiber Extraction**           | Lit les réponses directement dans l'état interne React de l'application (pas d'IA, pas de clé API requise, 100% précis).                                |
-| 🤫 **Mode Discret (Manuel) **           | Notre ajout phare : aucun clic auto, surbrillance par pointillés ultra-fins de la bonne réponse. Invisible à l'écran mais parfait pour guider vos yeux. |
-| ⌨️ **Raccourcis Clavier Globaux **      | Contrôlez l'extension à la volée sans jamais ouvrir le popup (`Alt + Shift + D/A/S/F`).                                                                 |
+| 🤫 **Mode Discret (Manuel)**            | Notre ajout phare : aucun clic auto, surbrillance par pointillés ultra-fins de la bonne réponse. Invisible à l'écran mais parfait pour guider vos yeux. |
+| ⌨️ **Raccourcis Clavier Globaux**       | Contrôlez l'extension à la volée sans jamais ouvrir le popup (`Alt + Shift + D/A/S/F`).                                                                 |
 | ✅ **Exercices "Cliquer sur la faute"** | Détecte et clique sur le mot erroné, ou sur _"Il n'y a pas de faute"_.                                                                                  |
 | 📝 **Exercices "Cliquer sur le mot"**   | Identifie et clique sur le bon mot (COD, participe passé, etc.).                                                                                        |
 | 📋 **Exercices "Cliquer / Déposer"**    | Place automatiquement les phrases dans les bonnes colonnes (Tableaux).                                                                                  |
