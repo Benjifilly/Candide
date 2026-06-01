@@ -1,72 +1,89 @@
+<div align="center">
+
 # 🍃 Candide
 
-> **"Il faut cultiver notre jardin."** — Voltaire, _Candide_
+**Assistant intelligent, discret et haut de gamme pour la plateforme Projet Voltaire.**
 
-**Candide** est un assistant intelligent, élégant et ultra-discret pour la plateforme **Projet Voltaire**.
+[![Version](https://img.shields.io/badge/version-1.0.0-amber?style=flat-square)](https://github.com/Benjifilly/candide/releases/latest)
+[![Manifest V3](https://img.shields.io/badge/Manifest-V3-green?style=flat-square&logo=google-chrome)](https://developer.chrome.com/docs/extensions/mv3/)
+[![License](https://img.shields.io/badge/license-MIT-orange?style=flat-square)](LICENSE)
 
-C'est un projet qui existait déjà je l'ai juste un peu amélioré mais bref https://github.com/quelquun667/Projet-Voltaire-Solver.
-
----
-
-- ⌨️ **Raccourcis Clavier Globaux** :
-  - `Alt + Shift + D` : Activer instantanément le **Mode Discret** (avec réévaluation immédiate de la phrase en cours)
-  - `Alt + Shift + A` : Activer le **Mode Automatique**
-  - `Alt + Shift + S` : Désactiver l'assistant (Mode Inactif)
-  - `Alt + Shift + F` : Forcer la résolution de la phrase actuelle uniquement
+*Ce projet est un fork personnalisé et grandement amélioré "à ma sauce" à partir de l'excellent travail initial de [quelquun667/Projet-Voltaire-Solver](https://github.com/quelquun667/Projet-Voltaire-Solver).*
 
 ---
 
-## 📸 Aperçu
+### 📸 Aperçu de l'interface
 
-| Mode Sombre minimaliste                        | Réglages avancés                                     |
-| ---------------------------------------------- | ---------------------------------------------------- |
+| 🌗 Mode Sombre Minimaliste | 🎛️ Réglages Avancés |
+| :---: | :---: |
 | ![Aperçu Popup](screenshots/popup_preview.png) | ![Aperçu Réglages](screenshots/settings_preview.png) |
 
-_(Ajoutez vos captures d'écran dans le dossier `screenshots/` pour les afficher ici)_
+</div>
 
 ---
 
-## 🛠️ Installation
+## ✨ Fonctionnalités majeures
 
-L'extension s'installe manuellement en quelques clics via le mode développeur de votre navigateur (Chrome, Brave, Edge, Opera...).
+| Fonctionnalité | Description |
+| :--- | :--- |
+| 🔍 **React Fiber Extraction** | Lit les réponses directement dans l'état interne React de l'application (pas d'IA, pas de clé API requise, 100% précis). |
+| 🤫 **Mode Discret (Manuel) *[Custom]*** | Notre ajout phare : aucun clic auto, surbrillance par pointillés ultra-fins (`rgba(128,128,128, 0.45)`) de la bonne réponse. Invisible à l'écran mais parfait pour guider vos yeux. |
+| ⌨️ **Raccourcis Clavier Globaux *[Custom]*** | Contrôlez l'extension à la volée sans jamais ouvrir le popup (`Alt + Shift + D/A/S/F`). |
+| ✅ **Exercices "Cliquer sur la faute"** | Détecte et clique sur le mot erroné, ou sur *"Il n'y a pas de faute"*. |
+| 📝 **Exercices "Cliquer sur le mot"** | Identifie et clique sur le bon mot (COD, participe passé, etc.). |
+| 📋 **Exercices "Cliquer / Déposer"** | Place automatiquement les phrases dans les bonnes colonnes (Tableaux). |
+| 📊 **Stats en temps réel** | Compteur de réussite et d'erreurs réinitialisé à chaque nouvelle session. |
+| ⏱️ **Délais Humains** | Intervalle de temps aléatoire configurable (min/max) pour simuler un comportement humain naturel. |
+| 🎲 **Taux d'Erreur Configurable** | Possibilité de rater volontairement des questions (de 0 à 50%) pour lisser vos scores. |
+| 🕵️ **Mode Inspecteur** | Outil intégré pour analyser les sélecteurs DOM pour le débogage. |
 
-### Étape 1 : Télécharger ou cloner le projet
+---
 
-Clonez ce dépôt ou téléchargez-le sous forme d'archive ZIP et extrayez-le sur votre ordinateur.
+## ⌨️ Raccourcis Clavier (Ultra Pratiques)
 
-### Étape 2 : Ouvrir la page des extensions
+Gardez les mains sur le clavier ! Les raccourcis ont été pensés pour être réactifs instantanément, même sur la question en cours d'affichage :
 
-Dans votre navigateur basé sur Chromium (Chrome par exemple) :
+* 🤫 **`Alt + Shift + D`** : Activer le **Mode Discret** (Manuel). *(Réévalue et affiche instantanément les pointillés de la phrase active)*
+* ⚡ **`Alt + Shift + A`** : Activer le **Mode Automatique**.
+* 🛑 **`Alt + Shift + S`** : **Désactiver** complètement l'assistant.
+* 🎯 **`Alt + Shift + F`** : **Forcer** la résolution/validation uniquement de la phrase en cours.
 
-1. Ouvrez un nouvel onglet et accédez à : `chrome://extensions/`
-2. Ou via le menu : **Options (trois points)** > **Extensions** > **Gérer les extensions**.
+---
+
+## 🛠️ Guide d'Installation Pas-à-Pas
+
+L'extension s'installe en quelques secondes via le mode développeur de votre navigateur basé sur Chromium (Chrome, Brave, Edge, Opera, Vivaldi...).
+
+### Étape 1 : Récupérer le projet
+Téléchargez ce dépôt GitHub sous forme d'archive ZIP et décompressez-la dans un dossier permanent sur votre ordinateur (par exemple dans vos Documents).
+
+### Étape 2 : Ouvrir la page des Extensions
+Dans votre navigateur :
+1. Ouvrez un nouvel onglet et tapez : `chrome://extensions/`
+2. Assurez-vous d'être sur la page de gestion des extensions.
 
 ### Étape 3 : Activer le Mode Développeur
-
-En haut à droite de la page des extensions, activez l'interrupteur **Mode développeur**.
+En haut à droite de l'écran, cochez ou activez l'interrupteur **Mode développeur**.
 
 ![Activer le mode développeur](screenshots/step_developer_mode.png)
 
 ### Étape 4 : Charger l'extension
-
 1. Cliquez sur le bouton **Charger l'extension non empaquetée** (en haut à gauche).
-2. Sélectionnez le dossier contenant les fichiers du projet (le dossier qui contient le fichier `manifest.json`).
+2. Sélectionnez le dossier contenant l'extension (le dossier principal `Candide` qui contient le fichier `manifest.json`).
 
 ![Charger l'extension non empaquetée](screenshots/step_load_unpacked.png)
 
-🚀 **C'est tout !** L'extension est installée et prête à l'emploi sur Projet Voltaire.
+🚀 **Félicitations !** Candide est désormais installée. Épinglez-la dans votre barre d'outils pour y accéder facilement.
 
 ---
 
-## ⚙️ Configuration recommandées
+## ⚙️ Paramètres de Sécurité Recommandés
 
-Pour une discrétion maximale en mode automatique :
-
-- **Délais** : Utilisez un intervalle de `2000ms - 4000ms` pour simuler une vitesse de lecture humaine.
-- **Taux d'erreur** : Configurez-le entre `5%` et `15%` pour ne pas éveiller de soupçons avec un score parfait de 100% trop rapide.
+Pour une discrétion maximale et éviter toute détection comportementale par la plateforme :
+* **Délais** : Nous vous conseillons de configurer un délai aléatoire entre `2000ms` et `4000ms` afin d'imiter le rythme de lecture d'un être humain.
+* **Taux d'erreur** : Un taux de `8%` à `15%` est idéal. Faire des fautes de temps en temps est indispensable pour un comportement naturel et des statistiques cohérentes.
 
 ---
 
-## 📝 Mentions Légales & Origine
-
-_Ce projet est une version modifiée et personnalisée pour un usage strictement privé et éducatif. Il s'appuie sur une base de code existante d'un autre développeur, réécrite et adaptée pour améliorer l'expérience utilisateur, l'esthétique générale, la réactivité des raccourcis et la discrétion visuelle._
+## ⚖️ Mentions Légales
+*Ce projet est destiné uniquement à un but éducatif, de recherche et pour un usage privé. L'auteur décline toute responsabilité quant à l'utilisation qui pourrait être faite de cet outil.*
