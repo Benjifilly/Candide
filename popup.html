@@ -703,6 +703,18 @@
     </div>
     <div id="delayWarning" class="slider-warning"></div>
 
+    <!-- Human Reading Dynamic Mode Toggle -->
+    <div style="margin-top: 4px; border-top: 1px solid var(--border); padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; flex-direction: column; gap: 1px;">
+        <span class="slider-title" style="margin-bottom: 0;">Lecture Humaine (Vitesse dynamique)</span>
+        <span style="font-size: 7px; color: var(--text-muted); line-height: 1;">Vitesse calculée selon la longueur de phrase</span>
+      </div>
+      <label class="switch" style="transform: scale(0.85); transform-origin: right;">
+        <input type="checkbox" id="humanMouseToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
     <!-- Error Rate Slider -->
     <div style="margin-top: 4px; border-top: 1px solid var(--border); padding-top: 4px;">
       <div class="slider-header">
@@ -815,14 +827,7 @@
         </label>
       </div>
 
-      <!-- Human Mouse Switch (Option!) -->
-      <div class="setting-item">
-        <span class="setting-label">Lecture Humaine (Vitesse dynamique)</span>
-        <label class="switch">
-          <input type="checkbox" id="humanMouseToggle">
-          <span class="slider"></span>
-        </label>
-      </div>
+
 
       <!-- Smart Pause Switch (Option!) -->
       <div class="setting-item">
