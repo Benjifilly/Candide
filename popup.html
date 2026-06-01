@@ -180,9 +180,13 @@
     }
 
     .tab-btn.active {
-      color: #ffffff;
-      background: var(--accent);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: var(--accent);
+      background: rgba(217, 119, 6, 0.1);
+      box-shadow: none;
+    }
+    body.dark-mode .tab-btn.active {
+      background: rgba(251, 191, 36, 0.12);
+      color: #fbbf24;
     }
 
     /* Range Sliders */

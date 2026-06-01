@@ -54,6 +54,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         solveEnabled = request.enabled;
         if (solveEnabled) {
             manualEnabled = false;
+            lastDetectedSentence = '';
             removeDiscreteHighlights();
             solveLoop();
         }
@@ -61,6 +62,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         manualEnabled = request.enabled;
         if (manualEnabled) {
             solveEnabled = false;
+            lastDetectedSentence = '';
             solveLoop();
         } else {
             removeDiscreteHighlights();
@@ -896,6 +898,7 @@ window.addEventListener('keydown', (e) => {
             chrome.storage.local.set({ solveEnabled: false, manualEnabled: true, lastActiveMode: 'manual' }, () => {
                 solveEnabled = false;
                 manualEnabled = true;
+                lastDetectedSentence = '';
                 solveLoop();
                 
                 chrome.runtime.sendMessage({
@@ -913,6 +916,7 @@ window.addEventListener('keydown', (e) => {
             chrome.storage.local.set({ solveEnabled: true, manualEnabled: false, lastActiveMode: 'solve' }, () => {
                 solveEnabled = true;
                 manualEnabled = false;
+                lastDetectedSentence = '';
                 removeDiscreteHighlights();
                 solveLoop();
                 
