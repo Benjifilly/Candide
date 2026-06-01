@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Projet Voltaire Solver",
+  "name": "Candide",
   "version": "2.2.1",
-  "description": "Automatiser la résolution des exercices et certifications du Projet Voltaire",
+  "description": "Assistant discret et élégant pour la plateforme Projet Voltaire",
   "permissions": [
     "activeTab",
     "scripting",
