@@ -54,6 +54,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         solveEnabled = request.enabled;
         if (solveEnabled) {
             manualEnabled = false;
+            lastDetectedSentence = ''; // Force immediate solver re-evaluation
             removeDiscreteHighlights();
             solveLoop();
         }
@@ -61,6 +62,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         manualEnabled = request.enabled;
         if (manualEnabled) {
             solveEnabled = false;
+            lastDetectedSentence = ''; // Force immediate manual re-highlight
             solveLoop();
         } else {
             removeDiscreteHighlights();
@@ -456,7 +458,7 @@ function solveLoop() {
                                     });
                                 }
                                 if (btn) {
-                                    btn.style.outline = '1.5px dashed rgba(128, 128, 128, 0.45)';
+                                    btn.style.outline = '2px dashed rgba(120, 120, 120, 0.7)';
                                     btn.setAttribute('data-pv-highlighted', 'true');
                                 }
                             } else if (answer.type === 'click_word') {
@@ -472,7 +474,7 @@ function solveLoop() {
                                     });
                                 }
                                 if (targetWord) {
-                                    targetWord.style.borderBottom = '1.5px dashed rgba(128, 128, 128, 0.45)';
+                                    targetWord.style.borderBottom = '2px dashed rgba(120, 120, 120, 0.7)';
                                     targetWord.setAttribute('data-pv-highlighted', 'true');
                                 }
                             }
@@ -896,6 +898,7 @@ window.addEventListener('keydown', (e) => {
             chrome.storage.local.set({ solveEnabled: false, manualEnabled: true, lastActiveMode: 'manual' }, () => {
                 solveEnabled = false;
                 manualEnabled = true;
+                lastDetectedSentence = ''; // Force immediate re-highlight
                 solveLoop();
                 
                 chrome.runtime.sendMessage({
@@ -913,6 +916,7 @@ window.addEventListener('keydown', (e) => {
             chrome.storage.local.set({ solveEnabled: true, manualEnabled: false, lastActiveMode: 'solve' }, () => {
                 solveEnabled = true;
                 manualEnabled = false;
+                lastDetectedSentence = ''; // Force immediate solve evaluation
                 removeDiscreteHighlights();
                 solveLoop();
                 
